@@ -92,12 +92,16 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli@4
 
-      # RAILWAY_TOKEN là Project Token (Railway → Project Settings → Tokens),
+      # RAILWAY_API_TOKEN là Account Token (Railway → Account Settings → Tokens),
       # cất trong GitHub → Settings → Secrets and variables → Actions.
+      # Account token không gắn sẵn project nên phải link project/env/service trước.
       - name: railway up
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --ci --service "${{ vars.RAILWAY_SERVICE }}"
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+        run: |
+          railway link --project "${{ vars.RAILWAY_PROJECT_ID }}" \
+            --environment production --service "${{ vars.RAILWAY_SERVICE }}"
+          railway up --ci --service "${{ vars.RAILWAY_SERVICE }}"
 
       - name: Smoke test
         run: |
